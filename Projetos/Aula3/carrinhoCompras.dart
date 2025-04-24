@@ -1,7 +1,8 @@
 import "dart:io";
 
+List<String> produtos = [];
+
 main() {
-  List<String> produtos = [];
   bool condicao = true;
 
   while (condicao) {
@@ -12,11 +13,27 @@ main() {
       print("== FIM DA LISTA ==");
       condicao = false;
     } else if (text == "imprimir") {
-      for (int i = 0; i < produtos.length; i++) {
-        print("$i - ${produtos[i]}");
-      }
+      exibir();
+    } else if (text == "remover") {
+      remover();
     } else {
       produtos.add(text);
     }
   }
+}
+
+exibir() {
+  for (int i = 0; i < produtos.length; i++) {
+    print("$i - ${produtos[i]}");
+  }
+}
+
+remover() {
+  print("== QUAL ITEM DESEJA REMOVER? ==");
+
+  exibir();
+
+  int item = int.parse(stdin.readLineSync()!);
+  produtos.removeAt(item);
+  print("== ITEM REMOVIDO ==");
 }
