@@ -34,4 +34,14 @@ void main() {
       'Produto: ${item.nomeProduto}, Quantidade em estoque: ${item.quantidade}, Preço de venda: ${item.preco}',
     );
   }
+
+  contaMatheus.receber(500);
+
+  print(contaMatheus.titular);
+  print(contaMatheus.saldo);
+
+  contaMatheus.enviar(200);
+
+  print(contaMatheus.titular);
+  print(contaMatheus.saldo);
 }
