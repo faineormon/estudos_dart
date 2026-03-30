@@ -4,15 +4,23 @@ int calculate() {
 
 class Conta {
   String titular;
-  double saldo;
+  double _saldo;
 
-  Conta(this.titular, this.saldo);
+  Conta(this.titular, this._saldo);
 
   void receber(double valor) {
-    saldo += valor;
+    _saldo += valor;
+    imprimeSaldo();
   }
 
   void enviar(double valor) {
-    saldo -= valor;
+    if (_saldo >= valor) {
+      _saldo -= valor;
+      imprimeSaldo();
+    }
+  }
+
+  void imprimeSaldo() {
+    print("O saldo atual de $titular, é: R\$$_saldo");
   }
 }

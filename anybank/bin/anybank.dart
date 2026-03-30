@@ -1,5 +1,6 @@
 import 'package:anybank/anybank.dart' as anybank;
 import 'package:anybank/estoque.dart' as estoque;
+import 'package:anybank/hotel.dart';
 
 void main() {
   //print('Hello world: ${anybank.calculate()}!');
@@ -9,8 +10,7 @@ void main() {
   List<anybank.Conta> contas = <anybank.Conta>[contaMatheus, contaRoberta];
 
   for (anybank.Conta conta in contas) {
-    print(conta.titular);
-    print(conta.saldo);
+    conta.imprimeSaldo();
   }
 
   estoque.ItemEstoque produto1 = estoque.ItemEstoque("Smartphone", 100, 0);
@@ -35,13 +35,16 @@ void main() {
     );
   }
 
-  contaMatheus.receber(500);
+  contaRoberta.receber(3000);
 
-  print(contaMatheus.titular);
-  print(contaMatheus.saldo);
+  contaMatheus.receber(500);
 
   contaMatheus.enviar(200);
 
-  print(contaMatheus.titular);
-  print(contaMatheus.saldo);
+  Cliente cliente = Cliente('Joaquim', []);
+
+  cliente.fazerReserva('101');
+  cliente.fazerReserva('102');
+  cliente.fazerReserva('103');
+  cliente.cancelarReserva('102');
 }
