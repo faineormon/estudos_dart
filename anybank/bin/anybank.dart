@@ -1,12 +1,14 @@
 import 'package:anybank/Animal.dart';
+import 'package:anybank/agendamento.dart';
 import 'package:anybank/anybank.dart' as anybank;
 import 'package:anybank/estoque.dart' as estoque;
+import 'package:anybank/funcionarios.dart';
 import 'package:anybank/hotel.dart';
 
 void main() {
   //print('Hello world: ${anybank.calculate()}!');
-  anybank.Conta contaMatheus = anybank.Conta("Matheus", 1000);
-  anybank.Conta contaRoberta = anybank.Conta("Roberta", 2000);
+  anybank.ContaCorrente contaMatheus = anybank.ContaCorrente("Matheus", 1000);
+  anybank.ContaCorrente contaRoberta = anybank.ContaCorrente("Roberta", 2000);
   anybank.ContaCorrente contaCris = anybank.ContaCorrente("Cris", 4000);
   anybank.ContaPoupanca contaDenise = anybank.ContaPoupanca("Denise", 4000);
   anybank.ContaSalario contaCatarina = anybank.ContaSalario(
@@ -102,4 +104,22 @@ void main() {
 
   gato.emitirSom();
   gato.arranharMoveis();
+
+  Funcionarios analista = Analista("João");
+  Funcionarios gerente = Gerente("Maria");
+  Funcionarios diretor = Diretor("Giovana");
+
+  // Impressão dos cálculos de salário
+  print('Salário do Analista João: R\$ ${analista.calcularSalario()}');
+  print('Salário da Gerente Maria: R\$ ${gerente.calcularSalario()}');
+  print('Salário da Diretora Giovana: R\$ ${diretor.calcularSalario()}');
+
+  Medico medico = Medico();
+  Dentista dentista = Dentista();
+
+  GerenciadorDeAgendamentos gerenciador = GerenciadorDeAgendamentos();
+  gerenciador.adicionarProfissional(medico);
+  gerenciador.adicionarProfissional(dentista);
+
+  gerenciador.exibirDuracaoEDisponibilidade();
 }

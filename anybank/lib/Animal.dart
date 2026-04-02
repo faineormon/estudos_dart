@@ -1,4 +1,4 @@
-class Animal {
+abstract class Animal {
   void emitirSom() {
     print("Emitir som");
   }
