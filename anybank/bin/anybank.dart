@@ -1,4 +1,4 @@
-import 'package:anybank/Animal.dart';
+import 'package:anybank/animal.dart';
 import 'package:anybank/agendamento.dart';
 import 'package:anybank/anybank.dart' as anybank;
 import 'package:anybank/estoque.dart' as estoque;
@@ -16,6 +16,11 @@ void main() {
     3000,
     "anybank",
     "123456789",
+  );
+  anybank.ContaEmpresa contaJose = anybank.ContaEmpresa("José", 2000);
+  anybank.ContaInvestimento contaMaria = anybank.ContaInvestimento(
+    "Maria",
+    2000,
   );
 
   List<anybank.Conta> contas = <anybank.Conta>[contaMatheus, contaRoberta];
@@ -74,6 +79,10 @@ void main() {
 
   contaCatarina.imprimeSaldo();
   contaCatarina.receber(3000);
+
+  contaJose.enviar(1000);
+
+  contaMaria.receber(1000);
 
   Cliente cliente = Cliente('Joaquim', []);
 

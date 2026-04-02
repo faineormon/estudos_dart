@@ -60,3 +60,35 @@ class QuartoLuxo extends Quarto {
     print("Limpando o quarto $tipo.");
   }
 }
+
+mixin taxaBagagem {
+  double taxa = 0.1;
+
+  double calcularTaxa(double valor) {
+    return valor * taxa;
+  }
+}
+
+abstract class Passagem {
+  String cliente;
+  double valorBase;
+
+  Passagem(this.cliente, this.valorBase);
+
+  double calcularPrecoFinal() {
+    return valorBase;
+  }
+}
+
+class PassagemComBagagem extends Passagem with taxaBagagem {
+  PassagemComBagagem(super.cliente, super.valorBase);
+
+  @override
+  double calcularPrecoFinal() {
+    return valorBase + calcularTaxa(valorBase);
+  }
+}
+
+class PassagemSemBagagem extends Passagem {
+  PassagemSemBagagem(super.cliente, super.valorBase);
+}
