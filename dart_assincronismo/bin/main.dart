@@ -1,10 +1,17 @@
+import 'package:dart_assincronismo/api_key.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 
 void main() {
   // print("Olá mundo!");
   //requestData();
-  requestDataAsync();
+  //requestDataAsync();
+  sendDataAsync({
+    "id": "ID011",
+    "name": "Flutter",
+    "lastName": "Dart",
+    "balance": 5000,
+  });
 }
 
 requestData() {
@@ -25,12 +32,37 @@ requestData() {
   print("Ultima coisa a acontecer na função");
 }
 
-requestDataAsync() async {
+Future<List<dynamic>> requestDataAsync() async {
   String url =
       "https://gist.githubusercontent.com/faineormon/7d38b85e767d4baad2f851de254d235a/raw/626046a8b68351bd19f9a4efe8d5a7cabf9a89d7/accounts.json";
 
   Response response = await get(Uri.parse(url));
 
-  print(json.decode(response.body)[0]);
-  print("De fato, a última coisa a acontecer na função.");
+  return json.decode(response.body);
+
+  /* print(json.decode(response.body)[0]);
+  print("De fato, a última coisa a acontecer na função."); */
+}
+
+sendDataAsync(Map<String, dynamic> mapAccount) async {
+  List<dynamic> listAccounts = await requestDataAsync();
+
+  listAccounts.add(mapAccount);
+
+  String content = json.encode(listAccounts);
+
+  String url = "https://api.github.com/gists/7d38b85e767d4baad2f851de254d235a";
+
+  Response response = await post(
+    Uri.parse(url),
+    headers: {"Authorization": "Bearer $githubApiKey"},
+    body: json.encode({
+      "description": "accounts.json",
+      "public": true,
+      "files": {
+        "accounts.json": {"content": content},
+      },
+    }),
+  );
+  print(response.statusCode);
 }
