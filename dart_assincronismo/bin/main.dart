@@ -1,18 +1,25 @@
 import 'package:dart_assincronismo/api_key.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
+import 'dart:async';
 
 void main() {
+  StreamSubscription subscription = streamController.stream.listen((event) {
+    print(event);
+  });
+
   // print("Olá mundo!");
   //requestData();
   //requestDataAsync();
-  sendDataAsync({
+  /* sendDataAsync({
     "id": "ID011",
     "name": "Flutter",
     "lastName": "Dart",
     "balance": 5000,
-  });
+  }); */
 }
+
+StreamController<String> streamController = StreamController<String>();
 
 requestData() {
   String url =
@@ -26,10 +33,10 @@ requestData() {
     Map<String, dynamic> mapCarla = listAccounts.firstWhere(
       (element) => element["name"] == "Carla",
     );
-    print(mapCarla["balance"]);
+    //print(mapCarla["balance"]);
   });
 
-  print("Ultima coisa a acontecer na função");
+  streamController.add("${DateTime.now()} | Requisição com Future");
 }
 
 Future<List<dynamic>> requestDataAsync() async {
@@ -38,6 +45,7 @@ Future<List<dynamic>> requestDataAsync() async {
 
   Response response = await get(Uri.parse(url));
 
+  streamController.add("${DateTime.now()} | Requisição Assíncrona");
   return json.decode(response.body);
 
   /* print(json.decode(response.body)[0]);
@@ -64,5 +72,6 @@ sendDataAsync(Map<String, dynamic> mapAccount) async {
       },
     }),
   );
-  print(response.statusCode);
+  streamController.add("${DateTime.now()} | Adicionado ${toSend['name']}");
+  //print(response.statusCode);
 }
