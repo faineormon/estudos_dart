@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dart_assincronismo/services/account_service.dart';
+import 'package:http/http.dart';
 
 import '../models/account.dart';
 
@@ -57,8 +58,16 @@ class AccountScreen {
     try {
       List<Account> listAccounts = await _accountService.getAll();
       print(listAccounts);
+    } on ClientException catch (e) {
+      print(
+        "Não foi possível se conectar ao servidor. Verifique sua conexão com a internet.",
+      );
+      print(e.message);
+      print(e.uri);
     } on Exception {
       print("Ocorreu um erro ao tentar buscar as contas.");
+    } finally {
+      print("${DateTime.now()} | Fim da requisição.");
     }
   }
 
