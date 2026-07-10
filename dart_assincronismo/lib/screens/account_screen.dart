@@ -8,11 +8,9 @@ class AccountScreen {
   final AccountService _accountService = AccountService();
 
   void initializeStream() {
-    _accountService.streamInfos.listen(
-      (event) {
-        print(event);
-      },
-    );
+    _accountService.streamInfos.listen((event) {
+      print(event);
+    });
   }
 
   void runChatBot() async {
@@ -56,8 +54,12 @@ class AccountScreen {
   }
 
   _getAllAccounts() async {
-    List<Account> listAccounts = await _accountService.getAll();
-    print(listAccounts);
+    try {
+      List<Account> listAccounts = await _accountService.getAll();
+      print(listAccounts);
+    } on Exception {
+      print("Ocorreu um erro ao tentar buscar as contas.");
+    }
   }
 
   _addExampleAccount() async {
