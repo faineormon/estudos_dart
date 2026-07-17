@@ -1,7 +1,7 @@
 import 'dart:async';
 
-//import 'package:dart_assincronismo/api_key.dart';
-import 'package:dart_assincronismo/models/account.dart';
+import 'package:dart_exceptions/api_key.dart';
+import 'package:dart_exceptions/models/account.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 
@@ -16,9 +16,8 @@ class AccountService {
     _streamController.add("${DateTime.now()} | Requisição de leitura.");
 
     Map<String, dynamic> mapResponse = json.decode(response.body);
-    List<dynamic> listDynamic = json.decode(
-      mapResponse["files"]["accounts.json"]["content"],
-    );
+    List<dynamic> listDynamic =
+        json.decode(mapResponse["files"]["accounts.json"]["content"]);
 
     List<Account> listAccounts = [];
 
@@ -35,7 +34,9 @@ class AccountService {
     List<Account> listAccounts = await getAll();
     listAccounts.add(account);
     save(listAccounts, accountName: account.name);
+  }
 
+  save(List<Account> listAccounts, {String accountName = ""}) async {
     List<Map<String, dynamic>> listContent = [];
     for (Account account in listAccounts) {
       listContent.add(account.toMap());
@@ -43,7 +44,7 @@ class AccountService {
 
     String content = json.encode(listContent);
 
-    /* Response response = await post(
+    Response response = await post(
       Uri.parse(url),
       headers: {"Authorization": "Bearer $githubApiKey"},
       body: json.encode({
@@ -59,17 +60,10 @@ class AccountService {
 
     if (response.statusCode.toString()[0] == "2") {
       _streamController.add(
-          "${DateTime.now()} | Requisição adição bem sucedida (${account.name}).");
+          "${DateTime.now()} | Requisição adição bem sucedida ($accountName).");
     } else {
       _streamController
-          .add("${DateTime.now()} | Requisição falhou (${account.name}).");
-    } */
-  }
-
-  save(List<Account> listAccounts, {String accountName = ""}) async {
-    List<Map<String, dynamic>> listContent = [];
-    for (Account account in listAccounts) {
-      listContent.add(account.toMap());
+          .add("${DateTime.now()} | Requisição falhou ($accountName).");
     }
   }
 }

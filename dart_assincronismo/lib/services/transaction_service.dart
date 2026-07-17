@@ -1,30 +1,76 @@
 import 'dart:convert';
+import 'dart:math';
 
-import 'package:dart_assincronismo/helpers/helper_taxes.dart';
-import 'package:dart_assincronismo/models/account.dart';
-import 'package:dart_assincronismo/models/transaction.dart';
-import 'package:dart_assincronismo/services/account_service.dart';
+import 'package:dart_exceptions/api_key.dart';
+import 'package:dart_exceptions/exceptions/transaction_exceptions.dart';
+import 'package:dart_exceptions/helpers/helper_taxes.dart';
+import 'package:dart_exceptions/models/account.dart';
+import 'package:dart_exceptions/models/transaction.dart';
+import 'package:dart_exceptions/services/account_service.dart';
 import 'package:http/http.dart';
 
 class TransactionService {
-  AccountService _accountService = AccountService();
-
+  final AccountService _accountService = AccountService();
   String url = "https://api.github.com/gists/413c0aefe6c6abc464581c29029c8ace";
 
-  makeTransaction(
-      {required String idSender,
-      required String idReceiver,
-      required double amount}) async {
-    List<Account> listAccount = await _accountService.getAll();
+  Future<void> makeTransaction({
+    required String idSender,
+    required String idReceiver,
+    required double amount,
+  }) async {
+    List<Account> listAccounts = await _accountService.getAll();
 
-    Account senderAccount = listAccount.firstWhere((acc) => acc.id == idSender);
+    if (listAccounts.where((acc) => acc.id == idSender).isEmpty) {
+      throw SenderNotExistsException();
+    }
 
-    Account receiverAccount =
-        listAccount.firstWhere((acc) => acc.id == idReceiver);
+    Account senderAccount = listAccounts.firstWhere(
+      (acc) => acc.id == idSender,
+    );
 
-    print(senderAccount);
-    print(receiverAccount);
-    print(calculateTaxesByAccount(sender: senderAccount, amount: amount));
+    if (listAccounts.where((acc) => acc.id == idReceiver).isEmpty) {
+      throw ReceiverNotExistsException();
+    }
+
+    Account receiverAccount = listAccounts.firstWhere(
+      (acc) => acc.id == idReceiver,
+    );
+
+    double taxes = calculateTaxesByAccount(
+      sender: senderAccount,
+      amount: amount,
+    );
+
+    if (senderAccount.balance < amount + taxes) {
+      throw InsufficientFundsException(
+        cause: senderAccount,
+        amount: amount,
+        taxes: taxes,
+      );
+    }
+
+    senderAccount.balance -= (amount + taxes);
+    receiverAccount.balance += amount;
+
+    listAccounts[listAccounts.indexWhere(
+      (acc) => acc.id == senderAccount.id,
+    )] = senderAccount;
+
+    listAccounts[listAccounts.indexWhere(
+      (acc) => acc.id == receiverAccount.id,
+    )] = receiverAccount;
+
+    Transaction transaction = Transaction(
+      id: (Random().nextInt(89999) + 10000).toString(),
+      senderAccountId: senderAccount.id,
+      receiverAccountId: receiverAccount.id,
+      date: DateTime.now(),
+      amount: amount,
+      taxes: taxes,
+    );
+
+    await _accountService.save(listAccounts);
+    await addTransaction(transaction);
   }
 
   Future<List<Transaction>> getAll() async {
@@ -63,7 +109,7 @@ class TransactionService {
     await post(
       Uri.parse(url),
       headers: {
-        //"Authorization": "Bearer $githubApiKey",
+        "Authorization": "Bearer $githubApiKey",
       },
       body: json.encode({
         "description": "accounts.json",
@@ -73,19 +119,5 @@ class TransactionService {
         }
       }),
     );
-  }
-
-  Future<void> makeTransaction({
-    required String idSender,
-    required String idReceiver,
-    required double amount,
-  }) async {
-    List<Account> listAccounts = await _accountService.getAll();
-
-    Account senderAccount =
-        listAccounts.where((acc) => acc.id == idSender).first;
-
-    Account receiverAccount =
-        listAccounts.where((acc) => acc.id == idReceiver).first;
   }
 }

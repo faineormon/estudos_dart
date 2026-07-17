@@ -1,10 +1,10 @@
-import 'package:dart_assincronismo/models/account.dart';
+import '../models/account.dart';
 
-double calculateTaxesByAccount(
-    {required Account sender, required double amount}) {
-  if (amount < 5000) {
-    return 0.0;
-  }
+double calculateTaxesByAccount({
+  required Account sender,
+  required double amount,
+}) {
+  if (amount < 5000) return 0;
 
   if (sender.accountType != null) {
     if (sender.accountType!.toUpperCase() == "AMBROSIA") {
@@ -17,6 +17,6 @@ double calculateTaxesByAccount(
       return amount * 0.0001; // É BRIGADEIRO
     }
   } else {
-    return 0.0; //Clientes antigos não possuem tipo de conta, então não pagam taxas
+    return 0.1;
   }
 }

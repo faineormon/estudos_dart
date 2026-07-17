@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dart_assincronismo/services/account_service.dart';
+import 'package:dart_exceptions/services/account_service.dart';
 import 'package:http/http.dart';
 
 import '../models/account.dart';
@@ -9,9 +9,11 @@ class AccountScreen {
   final AccountService _accountService = AccountService();
 
   void initializeStream() {
-    _accountService.streamInfos.listen((event) {
-      print(event);
-    });
+    _accountService.streamInfos.listen(
+      (event) {
+        print(event);
+      },
+    );
   }
 
   void runChatBot() async {
@@ -58,28 +60,34 @@ class AccountScreen {
     try {
       List<Account> listAccounts = await _accountService.getAll();
       print(listAccounts);
-    } on ClientException catch (e) {
-      print(
-        "Não foi possível se conectar ao servidor. Verifique sua conexão com a internet.",
-      );
-      print(e.message);
-      print(e.uri);
+    } on ClientException catch (clientException) {
+      print("Não foi possível alcançar o servidor.");
+      print("Tente novamente mais tarde.");
+      print(clientException.message);
+      print(clientException.uri);
     } on Exception {
-      print("Ocorreu um erro ao tentar buscar as contas.");
+      print("Não consegui recuperar os dados da conta.");
+      print("Tente novamente mais tarde.");
     } finally {
-      print("${DateTime.now()} | Fim da requisição.");
+      print("${DateTime.now()} | Ocorreu uma tentativa de consulta.");
+      // Aqui vai rodar antes de fechar.
     }
+    // Aqui não vai rodar antes de fechar.
   }
 
   _addExampleAccount() async {
-    Account example = Account(
-      id: "ID555",
-      name: "Haley",
-      lastName: "Chirívia",
-      balance: 8001,
-      accountType: "Brigadeiro",
-    );
+    try {
+      Account example = Account(
+        id: "ID555",
+        name: "Haley",
+        lastName: "Chirívia",
+        balance: 8001,
+        accountType: "Brigadeiro",
+      );
 
-    await _accountService.addAccount(example);
+      await _accountService.addAccount(example);
+    } on Exception {
+      print("Ocorreu um problema ao tentar adicionar.");
+    }
   }
 }
